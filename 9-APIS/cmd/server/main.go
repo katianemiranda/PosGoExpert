@@ -5,6 +5,7 @@ import (
 	"katianemiranda/PosGoExpert/9-APIS/internal/entity"
 	"katianemiranda/PosGoExpert/9-APIS/internal/infra/database"
 	"katianemiranda/PosGoExpert/9-APIS/internal/infra/webserver/handlers"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -28,11 +29,15 @@ func main() {
 	productHandler := handlers.NewProductHandler(productDB)
 
 	userDB := database.NewUser(db)
-	userHandler := handlers.NewUserHandler(userDB, configs.TokenAuth, configs.JWTExpiresIn)
+	userHandler := handlers.NewUserHandler(userDB)
 	println(configs.JWTExpiresIn)
 
 	r := chi.NewRouter()
+	//r.Use(LogRequest)
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.WithValue("jwt", configs.TokenAuth))
+	r.Use(middleware.WithValue("JwtExpiresIn", configs.JWTExpiresIn))
 
 	r.Route("/products", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(configs.TokenAuth))
@@ -49,4 +54,11 @@ func main() {
 	r.Post("/users/generate_token", userHandler.GetJwt)
 
 	http.ListenAndServe(":8000", r)
+}
+
+func LogRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Request: %s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
 }
