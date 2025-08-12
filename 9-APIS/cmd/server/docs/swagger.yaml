@@ -1,0 +1,23 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: katianemiranda00@gmail.com
+    name: Katiane Miranda
+    url: http://katianemiranda.com
+  description: This is a sample server for a Go Expert API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Go Expert API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

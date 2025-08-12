@@ -8,12 +8,34 @@ import (
 	"log"
 	"net/http"
 
+	_ "katianemiranda/PosGoExpert/9-APIS/docs"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+// @title           Go Expert API
+// @version         1.0
+// @description     This is a sample server for a Go Expert API.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   Katiane Miranda
+// @contact.url    http://katianemiranda.com
+// @contact.email katianemiranda00@gmail.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8000
+// @BasePath  /
+// @schemes  http
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	configs, err := configs.LoadConfig(".")
@@ -52,6 +74,7 @@ func main() {
 
 	r.Post("/users", userHandler.Create)
 	r.Post("/users/generate_token", userHandler.GetJwt)
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
 	http.ListenAndServe(":8000", r)
 }
