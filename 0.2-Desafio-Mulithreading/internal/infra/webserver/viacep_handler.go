@@ -1,0 +1,27 @@
+package webserver
+
+import (
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+)
+
+func BuscaCEPbyViaCEPHandler1(w http.ResponseWriter, r *http.Request) {
+	cep := chi.URLParam(r, "cep")
+	if cep == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	//resp, _ := http.Get("https://viacep.com.br/ws/" + cep + "/json/")
+
+	//	defer resp.Body.Close()
+
+	//body, _ := io.ReadAll(resp.Body)
+
+	//var viacep ViaCEPResponse
+	//err := json.Unmarshal(body, &viacep)
+
+	w.Header().Set("Content-Type", "application/json")
+	//json.NewEncoder(w).Encode(address)
+}
