@@ -6,7 +6,11 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func BuscaCEPbyViaCEPHandler1(w http.ResponseWriter, r *http.Request) {
+type ViaCepHandler struct {
+	viacep ViaCEPResponse
+}
+
+func (v *ViaCepHandler) BuscaCEPbyViaCEPHandler1(w http.ResponseWriter, r *http.Request) {
 	cep := chi.URLParam(r, "cep")
 	if cep == "" {
 		w.WriteHeader(http.StatusBadRequest)
