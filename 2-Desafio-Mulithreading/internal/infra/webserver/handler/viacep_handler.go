@@ -3,6 +3,7 @@ package webserver
 import (
 	"net/http"
 
+	_ " github.com/katianemiranda/0.2-Desafio-Multithreading/internal/entity"
 	"github.com/go-chi/chi/v5"
 )
 
