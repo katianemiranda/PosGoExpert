@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 
@@ -56,13 +55,6 @@ func BuscaCepbyViaCEP(cep string) (*entity.ViaCEPResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	//return &viacep, nil
-
-	if err != nil {
-		//w.WriteHeader(http.StatusNotFound)
-		//return
-	}
-
 	return &viacep, nil
 
 }
@@ -83,8 +75,8 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 	c1 := make(chan Resposta)
 	c2 := make(chan Resposta)
 
-	log.Println("Request iniciada By ViaCEP")
-	defer log.Println("Request finalizada By ViaCEP")
+	//log.Println("Request iniciada By ViaCEP")
+	//defer log.Println("Request finalizada By ViaCEP")
 
 	cep := chi.URLParam(r, "cep")
 	if cep == "" {
@@ -97,24 +89,23 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		log.Println(viacep)
-		json.NewEncoder(w).Encode(viacep)
-		w.WriteHeader(http.StatusOK)
-		msg := Resposta{Msg: "ViaCEP"}
-		time.Sleep(5 * time.Second)
+		//log.Println(viacep)
+		//	json.NewEncoder(w).Encode(viacep)
+		//w.WriteHeader(http.StatusOK)
+		msg := Resposta{Msg: "ViaCEP", ViaCep: *viacep}
+		//time.Sleep(5 * time.Second)
 		c1 <- msg
 	}()
-
 	go func() {
 		viacep, err := BuscaCepbyBrasilAPI(cep)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		log.Println(viacep)
-		msg := Resposta{Msg: "BrasilAPI"}
-		json.NewEncoder(w).Encode(viacep)
-		w.WriteHeader(http.StatusOK)
+		//log.Println(viacep)
+		msg := Resposta{Msg: "BrasilAPI", BrasilAPI: *viacep}
+		//	json.NewEncoder(w).Encode(viacep)
+		//	w.WriteHeader(http.StatusOK)
 		//time.Sleep(5 * time.Second)
 		c2 <- msg
 	}()
@@ -122,12 +113,14 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 	//for {
 	select {
 	case msg1 := <-c1:
-		fmt.Printf("Received from ViaCep:  Msg=%s\n", msg1.Msg)
-		w.Header().Set("Content-Type", "application/json")
+		fmt.Printf("Received from:  Msg=%s\n", msg1.Msg)
+		fmt.Println(msg1.ViaCep)
+		//w.Header().Set("Content-Type", "application/json")
 	case msg2 := <-c2:
-		fmt.Printf("Received from BrasilAPI: Msg=%s\n", msg2.Msg)
-	case <-time.After(time.Second * 3):
-		fmt.Println("Timeout: No messages received within 3 seconds")
+		fmt.Printf("Received from: Msg=%s\n", msg2.Msg)
+		fmt.Println(msg2.ViaCep)
+	case <-time.After(time.Second * 1):
+		fmt.Println("Timeout: No messages received within 1 seconds")
 
 	}
 	//}
