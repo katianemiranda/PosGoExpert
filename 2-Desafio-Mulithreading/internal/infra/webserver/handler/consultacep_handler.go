@@ -75,9 +75,6 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 	c1 := make(chan Resposta)
 	c2 := make(chan Resposta)
 
-	//log.Println("Request iniciada By ViaCEP")
-	//defer log.Println("Request finalizada By ViaCEP")
-
 	cep := chi.URLParam(r, "cep")
 	if cep == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -89,11 +86,7 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		//log.Println(viacep)
-		//	json.NewEncoder(w).Encode(viacep)
-		//w.WriteHeader(http.StatusOK)
 		msg := Resposta{Msg: "ViaCEP", ViaCep: *viacep}
-		//time.Sleep(5 * time.Second)
 		c1 <- msg
 	}()
 	go func() {
@@ -102,11 +95,7 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		//log.Println(viacep)
 		msg := Resposta{Msg: "BrasilAPI", BrasilAPI: *viacep}
-		//	json.NewEncoder(w).Encode(viacep)
-		//	w.WriteHeader(http.StatusOK)
-		//time.Sleep(5 * time.Second)
 		c2 <- msg
 	}()
 
@@ -115,10 +104,10 @@ func ConsultaCepHandler(w http.ResponseWriter, r *http.Request) {
 	case msg1 := <-c1:
 		fmt.Printf("Received from:  Msg=%s\n", msg1.Msg)
 		fmt.Println(msg1.ViaCep)
-		//w.Header().Set("Content-Type", "application/json")
+
 	case msg2 := <-c2:
 		fmt.Printf("Received from: Msg=%s\n", msg2.Msg)
-		fmt.Println(msg2.ViaCep)
+		fmt.Println(msg2.BrasilAPI)
 	case <-time.After(time.Second * 1):
 		fmt.Println("Timeout: No messages received within 1 seconds")
 
