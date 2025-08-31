@@ -59,7 +59,7 @@ func (h *UserHandler) GetJwt(w http.ResponseWriter, r *http.Request) {
 	}
 	_, tokenString, _ := jwt.Encode(map[string]interface{}{
 		"sub": u.ID.String(),
-		"exp": time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix,
+		"exp": time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix(),
 	})
 	println(tokenString)
 	println(time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix)
