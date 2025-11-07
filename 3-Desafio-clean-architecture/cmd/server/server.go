@@ -1,10 +1,11 @@
 package main
 
 import (
-	"desafio-clean-achitecture/graph"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/katianemiranda/desafio-clean-architecture/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
