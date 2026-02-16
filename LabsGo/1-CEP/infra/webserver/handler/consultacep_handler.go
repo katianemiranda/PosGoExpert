@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -42,7 +43,9 @@ func BuscarCEP(cep string) (*Resposta, error) {
 
 func BuscarCEPHandler(w http.ResponseWriter, r *http.Request) {
 	cep := chi.URLParam(r, "cep")
+	fmt.Printf("chamando cep: %s\n", cep)
 	resposta, err := BuscarCEP(cep)
+	//fmt.Printf(err.Error())
 	if err != nil {
 		http.Error(w, "Erro ao buscar o CEP", http.StatusInternalServerError)
 		return
