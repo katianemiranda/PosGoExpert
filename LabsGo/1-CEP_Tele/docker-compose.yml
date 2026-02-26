@@ -1,0 +1,36 @@
+services:
+  # Serviço A - Input e Validação
+  service-a:
+    build:
+      context: ./service-a
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # Não é estritamente necessário no Service A, mas é uma boa prática
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+    depends_on:
+      - service-b
+      - zipkin
+
+  # Serviço B - Lógica de Negócio e APIs Externas
+  service-b:
+    build:
+      context: ./service-b
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - WEATHERAPI_KEY=ebdba81c2d6c44578a534745252509 
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+    depends_on:
+      - zipkin
+
+  # Zipkin - Tracing Collector e Visualizador (OTEL compatível)
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    environment:
+      - STORAGE_TYPE=mem # Armazena os traces em memória para ambiente de dev

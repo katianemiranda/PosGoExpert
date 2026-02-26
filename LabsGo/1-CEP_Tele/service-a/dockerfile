@@ -1,0 +1,26 @@
+# Estágio de build
+FROM golang:latest AS builder
+WORKDIR /app
+
+# Copia e baixa as dependências
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+# Copia o código-fonte
+COPY . .
+
+# MUDANÇA CRÍTICA: Força a compilação estática
+RUN CGO_ENABLED=0 go build -o /service-a main.go
+
+# Estágio de execução
+FROM alpine:latest
+WORKDIR /root/
+# Instala a CA-certificates para requisições HTTPS
+RUN apk --no-cache add ca-certificates
+# Copia o binário e os arquivos de ambiente (se necessário)
+COPY --from=builder /service-a .
+
+# Exposição da porta e comando de execução
+EXPOSE 8080
+CMD ["./service-a"]
